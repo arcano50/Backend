@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public abstract class AbstractAdministrativeLevel {
 	private int id;
+	private EnumAdministrativeLevel type;
 	private String name;
 	private ArrayList<Member> memberCollection;
 	private ArrayList<Member> leaderCollection;
@@ -20,6 +21,14 @@ public abstract class AbstractAdministrativeLevel {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public EnumAdministrativeLevel getType() {
+		return type;
+	}
+
+	public void setType(EnumAdministrativeLevel type) {
+		this.type = type;
 	}
 
 	public String getName() {

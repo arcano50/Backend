@@ -2,18 +2,31 @@ package tec.diseno.communities.controller;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import tec.diseno.communities.model.AbstractAdministrativeLevelServices;
+import tec.diseno.communities.model.Coordination;
+import tec.diseno.communities.model.EnumAdministrativeLevel;
+
 @RestController
 public class OrganizationController {
+	
+	@Autowired
+	AbstractAdministrativeLevelServices services;
 
 	@RequestMapping(value = "/getCoordination", produces = "application/json", method = RequestMethod.GET)
-	public Object getUserInfo() {
-		return 5;
+	public Coordination getUserInfo() {
+		
+		
+		Coordination coordination = new Coordination();
+		coordination = (Coordination) services.getAdministrativeLevel(
+				EnumAdministrativeLevel.COORDINATION, 1);
+		return coordination;
 		/*
 		Object object = null;
 		ApplicationContext context = new ClassPathXmlApplicationContext("context.xml");

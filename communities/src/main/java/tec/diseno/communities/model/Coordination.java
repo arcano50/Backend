@@ -2,8 +2,9 @@ package tec.diseno.communities.model;
 
 import java.util.ArrayList;
 
-public class Coordination extends AdministrativeLevel implements InterfaceCoordination {
+public class Coordination extends AdministrativeLevel {
 	private String legalID;
+	private String website;
 	private String country;
 	private String state;
 	private String city;
@@ -20,6 +21,12 @@ public class Coordination extends AdministrativeLevel implements InterfaceCoordi
 	}
 	public void setLegalID(String legalID) {
 		this.legalID = legalID;
+	}
+	public String getWebsite() {
+		return website;
+	}
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 	public String getCountry() {
 		return country;

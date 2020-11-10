@@ -5,19 +5,29 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-//@SpringBootApplication
-//@ComponentScan({"tec.diseno.communities.controller"})
-public class App 
-{
+import tec.diseno.communities.model.AbstractAdministrativeLevelServices;
+
+@SpringBootApplication
+@ComponentScan({"tec.diseno.communities.controller"})
+@ComponentScan({"tec.diseno.communities.model"})
+public class App {
+	
+	@Autowired
+	AbstractAdministrativeLevelServices services;
+	
     public static void main( String[] args )
     {
-    	//SpringApplication.run(App.class, args);
-
-
+    	ApplicationContext context = SpringApplication.run(App.class, args);
+    	AbstractAdministrativeLevelServices services =
+    			context.getBean(AbstractAdministrativeLevelServices.class);
+    	
+    	/*
     	try {
             Class.forName("org.postgresql.Driver");
         }
@@ -42,5 +52,6 @@ public class App
         catch (java.sql.SQLException e) {
             System.out.println(e.getMessage());
         }
+        */
     }
 }

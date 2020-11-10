@@ -1,26 +1,18 @@
 package tec.diseno.communities.model;
 
+import java.util.ArrayList;
+
 public class Member {
 	private int id;
+	private int cardId;
 	private String name;
 	private String lastName;
-	private int cardId;
 	private String country;
 	private String state;
 	private String city;
 	private String address;
-	
-	public Member(int id, String name, String lastName, int cardId, String country, String state, String city,
-			String address) {
-		this.id = id;
-		this.name = name;
-		this.lastName = lastName;
-		this.cardId = cardId;
-		this.country = country;
-		this.state = state;
-		this.city = city;
-		this.address = address;
-	}
+	private ArrayList<String> telephoneCollection;
+	private ArrayList<String> emailCollection;
 
 	public Member() {
 		
@@ -89,7 +81,20 @@ public class Member {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
-	
-	
+
+	public ArrayList<String> getTelephoneCollection() {
+		return telephoneCollection;
+	}
+
+	public void setTelephoneCollection(ArrayList<String> telephoneCollection) {
+		this.telephoneCollection = telephoneCollection;
+	}
+
+	public ArrayList<String> getEmailCollection() {
+		return emailCollection;
+	}
+
+	public void setEmailCollection(ArrayList<String> emailCollection) {
+		this.emailCollection = emailCollection;
+	}
 }
