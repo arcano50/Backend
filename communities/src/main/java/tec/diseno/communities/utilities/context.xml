@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:element name="bean">
+	<xsd:annotation>
+	<xsd:documentation source="java:org.springframework.beans.factory.config.BeanDefinition">
+	<![CDATA[ Defines a single (usually named) bean. A bean definition may contain nested tags for constructor arguments, property values, lookup methods, and replaced methods. Mixing constructor injection and setter injection on the same bean is explicitly supported. ]]>
+	</xsd:documentation>
+	</xsd:annotation>
+	<xsd:complexType>
+	<xsd:complexContent>
+	<xsd:extension base="identifiedType">
+	<xsd:group ref="beanElements"/>
+	<xsd:attributeGroup ref="beanAttributes"/>
+	</xsd:extension>
+	</xsd:complexContent>
+	</xsd:complexType>
+</xsd:element>
+<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url"
+			value="jdbc:postgresql://lallah.db.elephantsql.com:5432/mfyrmgza" />
+		<property name="username" value="mfyrmgza" />
+		<property name="password"
+			value="5MK12PxXIKIOKoEQLwG-u68rF_MiXfHt" ></property>
+	</bean>
