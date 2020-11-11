@@ -11,8 +11,19 @@ public abstract class AbstractAdministrativeLevel {
 	private boolean loaded;
 	private boolean enable;
 	
-	public AbstractAdministrativeLevel(){
+	public AbstractAdministrativeLevel() {
 		
+	}
+	
+	public AbstractAdministrativeLevel(int _id, EnumAdministrativeLevel _type, String _name,  ArrayList<Member> _memberCollection,
+			 ArrayList<Member> _leaderCollection, boolean _loaded, boolean _enable){
+		id = _id;
+		type = _type;
+		name = _name;
+		memberCollection = _memberCollection;
+		leaderCollection = _leaderCollection;
+		loaded = _loaded;
+		enable = _enable;
 	}
 	
 	public int getId() {

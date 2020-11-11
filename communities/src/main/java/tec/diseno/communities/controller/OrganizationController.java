@@ -23,7 +23,7 @@ public class OrganizationController {
 	public Coordination getUserInfo() {
 		
 		
-		Coordination coordination = new Coordination();
+		Coordination coordination = null;
 		coordination = (Coordination) services.getAdministrativeLevel(
 				EnumAdministrativeLevel.COORDINATION, 1);
 		return coordination;

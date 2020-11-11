@@ -18,7 +18,7 @@ public interface InterfaceAdministrativeLevelBuilder {
 	public int addLeader(int current, int member);
 	public int delLeader(int current, int member);
 	
-	public ArrayList<AbstractAdministrativeLevel> getChildren(int parent, int current);
+	public ArrayList<AbstractAdministrativeLevel> getChildren(EnumAdministrativeLevel type, int parent);
 	public int addChildren(int current, int children);
 	public int delChildren(int current, int children);
 	

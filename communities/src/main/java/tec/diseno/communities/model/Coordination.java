@@ -3,7 +3,7 @@ package tec.diseno.communities.model;
 import java.util.ArrayList;
 
 public class Coordination extends AdministrativeLevel {
-	private String legalID;
+	private String legalId;
 	private String website;
 	private String country;
 	private String state;
@@ -16,11 +16,33 @@ public class Coordination extends AdministrativeLevel {
 		
 	}
 	
+	public Coordination(int _id, EnumAdministrativeLevel _type, String _name,  ArrayList<Member> _memberCollection,
+	 ArrayList<Member> _leaderCollection, ArrayList<AbstractAdministrativeLevel> _childrenCollection,
+	 boolean _loaded, boolean _enable, String _legalId, String _website, String _country, String _state,
+	 String _city, String _address, ArrayList<String> _telephoneCollection, ArrayList<String> _emailCollection) {
+		super(_id, _type, _name, _memberCollection, _leaderCollection, _childrenCollection, _loaded, _enable);
+		legalId = _legalId;
+		website = _website;
+		country = _country;
+		state = _state;
+		city = _city;
+		address = _address;
+		telephoneCollection = _telephoneCollection;
+		emailCollection = _emailCollection;
+		
+	}
+	
+	public Coordination(String _legalId, String _website, String _country, String _state, String _city,
+			String _address, ArrayList<String> _telephoneCollection, ArrayList<String> _emailCollection) {
+		legalId = _legalId;
+		website = _website;
+	}
+	
 	public String getLegalID() {
-		return legalID;
+		return legalId;
 	}
 	public void setLegalID(String legalID) {
-		this.legalID = legalID;
+		this.legalId = legalID;
 	}
 	public String getWebsite() {
 		return website;

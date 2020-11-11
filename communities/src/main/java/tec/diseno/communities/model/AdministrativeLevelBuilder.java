@@ -6,10 +6,11 @@ public class AdministrativeLevelBuilder {
 	private AbstractAdministrativeLevel product;
 	
 	private int id;
-	private String legalID;
+	private String legalId;
 	private int number;
 	private EnumAdministrativeLevel type;
 	private String name;
+	private String website;
 	private String country;
 	private String state;
 	private String city;
@@ -28,6 +29,23 @@ public class AdministrativeLevelBuilder {
 	}
 	
 	public AbstractAdministrativeLevel getProduct() {
+		AbstractAdministrativeLevel product = null;
+		switch (type) {
+		case COORDINATION:
+			product = new Coordination(id, type, name, memberCollection, leaderCollection, childrenCollection,
+					 loaded, enable, legalId, website, country, state, city, address, telephoneCollection, emailCollection);
+			break;
+		case ZONE:
+		case BRANCH:
+			product = new AdministrativeLevel(id, type, name, memberCollection, leaderCollection, childrenCollection,
+					 loaded, enable);
+			break;
+		case GROUP:
+			product = new Group();
+			break;
+		default:
+			break;
+		}
 		return product;
 	}
 	public void setProduct(AbstractAdministrativeLevel product) {
@@ -39,11 +57,11 @@ public class AdministrativeLevelBuilder {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getLegalID() {
-		return legalID;
+	public String getLegalId() {
+		return legalId;
 	}
-	public void setLegalID(String legalID) {
-		this.legalID = legalID;
+	public void setLegalId(String legalID) {
+		this.legalId = legalID;
 	}
 	public int getNumber() {
 		return number;
@@ -62,6 +80,12 @@ public class AdministrativeLevelBuilder {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getWebsite() {
+		return website;
+	}
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 	public String getCountry() {
 		return country;

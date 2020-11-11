@@ -67,8 +67,8 @@ public class AbstractAdministrativeLevelServices implements InterfaceAdministrat
 	}
 
 	@Override
-	public ArrayList<AbstractAdministrativeLevel> getChildren(int parent, int current) {
-		return dao.getChildren(parent, current);
+	public ArrayList<AbstractAdministrativeLevel> getChildren(EnumAdministrativeLevel type, int parent) {
+		return dao.getChildren(type, parent);
 	}
 
 	@Override

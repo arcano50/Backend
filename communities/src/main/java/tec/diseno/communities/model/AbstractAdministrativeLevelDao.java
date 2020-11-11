@@ -1,6 +1,9 @@
 package tec.diseno.communities.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -90,9 +94,75 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	}
 
 	@Override
-	public ArrayList<AbstractAdministrativeLevel> getChildren(int parent, int current) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<AbstractAdministrativeLevel> getChildren(EnumAdministrativeLevel type, int parent) {
+		List<AbstractAdministrativeLevel> result = new ArrayList<AbstractAdministrativeLevel>();
+		switch(type) {
+		case ROOT:
+			sql = "SELECT * FROM sp_get_coordination_children(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+				new RowMapper<AbstractAdministrativeLevel>() {
+			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.COORDINATION);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setLegalId(rs.getString("legalId"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setWebsite(rs.getString("website"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			        	builder.setCountry(rs.getString("address"));
+			        	builder.setState(rs.getString("address"));
+			        	builder.setCity(rs.getString("address"));
+			        	builder.setAddress(rs.getString("address"));
+			            return builder.getProduct();
+		        }
+		    });
+			break;
+		case COORDINATION:
+			sql = "SELECT * FROM sp_get_zone_childre(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+				new RowMapper<AbstractAdministrativeLevel>() {
+			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.ZONE);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			            return builder.getProduct();
+		        }
+		    });
+			break;
+		case ZONE:
+			sql = "SELECT * FROM sp_get_branch_children(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+				new RowMapper<AbstractAdministrativeLevel>() {
+			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.ZONE);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			            return builder.getProduct();
+		        }
+		    });
+			break;
+		case BRANCH:
+			sql = "SELECT * FROM sp_get_group_children(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+				new RowMapper<AbstractAdministrativeLevel>() {
+			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.GROUP);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			            return builder.getProduct();
+		        }
+		    });
+			break;
+		default:
+			break;
+		}
+		return new ArrayList<AbstractAdministrativeLevel>(result);
 	}
 
 	@Override
@@ -145,30 +215,70 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 
 	@Override
 	public AbstractAdministrativeLevel getAdministrativeLevel(EnumAdministrativeLevel type, int id) {
+		List<AdministrativeLevelBuilder> result = new ArrayList<AdministrativeLevelBuilder>();
 		switch(type) {
 		case COORDINATION:
-			sql = "SELECT sp_get_coordination(?)";
-			List<Map<String, Object>> _result =  getJdbcTemplate().queryForList(sql,
-					new Object[] {id});
-			System.out.print(_result);
-			Map<String, Object> result = _result.get(0);
-			Coordination coordination = new Coordination();
-			coordination.setId((int) result.get("Id"));
-			coordination.setLegalID((String) result.get("legalId"));
-			coordination.setName((String) result.get("name"));
-			coordination.setWebsite((String) result.get("website"));
-			coordination.setEnable((boolean) result.get("enable"));
-			return coordination;
+			sql = "SELECT * FROM sp_get_coordination(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {id},
+				new RowMapper<AdministrativeLevelBuilder>() {
+			        public AdministrativeLevelBuilder mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.COORDINATION);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setLegalId(rs.getString("legalId"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setWebsite(rs.getString("website"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			            return builder;
+		        }
+		    });
+			break;
 		case ZONE:
+			sql = "SELECT * FROM sp_get_zone(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {id},
+				new RowMapper<AdministrativeLevelBuilder>() {
+			        public AdministrativeLevelBuilder mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.ZONE);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			            return builder;
+		        }
+		    });
 			break;
 		case BRANCH:
+			sql = "SELECT * FROM sp_get_branch(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {id},
+				new RowMapper<AdministrativeLevelBuilder>() {
+			        public AdministrativeLevelBuilder mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.ZONE);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			            return builder;
+		        }
+		    });
 			break;
 		case GROUP:
+			sql = "SELECT * FROM sp_get_group(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {id},
+				new RowMapper<AdministrativeLevelBuilder>() {
+			        public AdministrativeLevelBuilder mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
+			        	builder.setType(EnumAdministrativeLevel.GROUP);
+			        	builder.setId(rs.getInt("Id"));
+			        	builder.setName(rs.getString("name"));
+			        	builder.setEnable(rs.getBoolean("enable"));
+			            return builder;
+		        }
+		    });
 			break;
 		default:
 			break;
 		}
-		return null;
+		return result.get(0).getProduct();
 	}
 
 	@Override
