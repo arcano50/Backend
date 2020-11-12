@@ -22,6 +22,33 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	@Autowired 
 	DataSource dataSource;
 	
+	public ArrayList<AbstractAdministrativeLevel> BuildBody() {
+		ArrayList<AbstractAdministrativeLevel> coordinationCollection =
+				getChildren(EnumAdministrativeLevel.ROOT, 0);
+
+		for(int c = 0; c < coordinationCollection.size(); c++) {
+			Coordination coordination = (Coordination)coordinationCollection.get(c);
+			ArrayList<AbstractAdministrativeLevel> zoneCollection =
+					getChildren(EnumAdministrativeLevel.COORDINATION, coordination.getId());
+			coordination.setChildrenCollection(zoneCollection);
+			
+			for(int z = 0; z < zoneCollection.size(); z++) {
+				AdministrativeLevel zone = (AdministrativeLevel)zoneCollection.get(z);
+				ArrayList<AbstractAdministrativeLevel> branchCollection =
+						getChildren(EnumAdministrativeLevel.ZONE, zone.getId());
+				zone.setChildrenCollection(branchCollection);
+				
+				for(int b = 0; b < branchCollection.size(); b++) {
+					AdministrativeLevel branch = (AdministrativeLevel)branchCollection.get(b);
+					ArrayList<AbstractAdministrativeLevel> groupCollection =
+							getChildren(EnumAdministrativeLevel.BRANCH, branch.getId());
+					branch.setChildrenCollection(groupCollection);
+				}
+			}
+		}
+		return coordinationCollection;
+	}
+	
 	@PostConstruct
 	private void initialize(){
 		setDataSource(dataSource);
@@ -98,7 +125,7 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		List<AbstractAdministrativeLevel> result = new ArrayList<AbstractAdministrativeLevel>();
 		switch(type) {
 		case ROOT:
-			sql = "SELECT * FROM sp_get_coordination_children(?)";
+			sql = "SELECT * FROM sp_get_coordination_full(?)";
 			result =  getJdbcTemplate().query(sql, new Object[] {parent},
 				new RowMapper<AbstractAdministrativeLevel>() {
 			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -108,18 +135,18 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 			        	builder.setLegalId(rs.getString("legalId"));
 			        	builder.setName(rs.getString("name"));
 			        	builder.setWebsite(rs.getString("website"));
-			        	builder.setEnable(rs.getBoolean("enable"));
-			        	builder.setCountry(rs.getString("address"));
-			        	builder.setState(rs.getString("address"));
-			        	builder.setCity(rs.getString("address"));
+			        	builder.setCountry(rs.getString("country"));
+			        	builder.setState(rs.getString("state"));
+			        	builder.setCity(rs.getString("city"));
 			        	builder.setAddress(rs.getString("address"));
+			        	builder.setEnable(rs.getBoolean("enable"));
 			            return builder.getProduct();
 		        }
 		    });
 			break;
 		case COORDINATION:
-			sql = "SELECT * FROM sp_get_zone_childre(?)";
-			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+			sql = "SELECT * FROM sp_get_zone_full(?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {0, parent},
 				new RowMapper<AbstractAdministrativeLevel>() {
 			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
 			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
@@ -132,12 +159,12 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		    });
 			break;
 		case ZONE:
-			sql = "SELECT * FROM sp_get_branch_children(?)";
-			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+			sql = "SELECT * FROM sp_get_branch_full(?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {0, parent},
 				new RowMapper<AbstractAdministrativeLevel>() {
 			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
 			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
-			        	builder.setType(EnumAdministrativeLevel.ZONE);
+			        	builder.setType(EnumAdministrativeLevel.BRANCH);
 			        	builder.setId(rs.getInt("Id"));
 			        	builder.setName(rs.getString("name"));
 			        	builder.setEnable(rs.getBoolean("enable"));
@@ -146,14 +173,15 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		    });
 			break;
 		case BRANCH:
-			sql = "SELECT * FROM sp_get_group_children(?)";
-			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+			sql = "SELECT * FROM sp_get_group_full(?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {0, parent},
 				new RowMapper<AbstractAdministrativeLevel>() {
 			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
 			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
 			        	builder.setType(EnumAdministrativeLevel.GROUP);
 			        	builder.setId(rs.getInt("Id"));
 			        	builder.setName(rs.getString("name"));
+			        	builder.setNumber(rs.getInt("number"));
 			        	builder.setEnable(rs.getBoolean("enable"));
 			            return builder.getProduct();
 		        }
@@ -228,6 +256,10 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 			        	builder.setLegalId(rs.getString("legalId"));
 			        	builder.setName(rs.getString("name"));
 			        	builder.setWebsite(rs.getString("website"));
+			        	builder.setCountry(rs.getString("country"));
+			        	builder.setState(rs.getString("state"));
+			        	builder.setCity(rs.getString("city"));
+			        	builder.setAddress(rs.getString("address"));
 			        	builder.setEnable(rs.getBoolean("enable"));
 			            return builder;
 		        }

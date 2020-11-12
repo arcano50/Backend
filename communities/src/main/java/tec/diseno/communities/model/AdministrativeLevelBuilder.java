@@ -41,13 +41,14 @@ public class AdministrativeLevelBuilder {
 					 loaded, enable);
 			break;
 		case GROUP:
-			product = new Group();
+			product = new Group(id, type, name, memberCollection, leaderCollection, loaded, enable, number, established);
 			break;
 		default:
 			break;
 		}
 		return product;
 	}
+	
 	public void setProduct(AbstractAdministrativeLevel product) {
 		this.product = product;
 	}

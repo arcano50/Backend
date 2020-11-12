@@ -1,5 +1,7 @@
 package tec.diseno.communities.controller;
 
+import java.util.ArrayList;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import tec.diseno.communities.model.AbstractAdministrativeLevel;
 import tec.diseno.communities.model.AbstractAdministrativeLevelServices;
 import tec.diseno.communities.model.Coordination;
 import tec.diseno.communities.model.EnumAdministrativeLevel;
@@ -18,14 +21,16 @@ public class OrganizationController {
 	
 	@Autowired
 	AbstractAdministrativeLevelServices services;
+	
+	ArrayList<AbstractAdministrativeLevel> coordination = null;
 
 	@RequestMapping(value = "/getCoordination", produces = "application/json", method = RequestMethod.GET)
-	public Coordination getUserInfo() {
+	public ArrayList<AbstractAdministrativeLevel> getUserInfo() {
 		
+		if (coordination != null)
+			return coordination;
 		
-		Coordination coordination = null;
-		coordination = (Coordination) services.getAdministrativeLevel(
-				EnumAdministrativeLevel.COORDINATION, 1);
+		coordination = services.BuildBody();
 		return coordination;
 		/*
 		Object object = null;

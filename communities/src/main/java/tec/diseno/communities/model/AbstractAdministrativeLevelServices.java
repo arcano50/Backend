@@ -11,6 +11,10 @@ public class AbstractAdministrativeLevelServices implements InterfaceAdministrat
 	@Autowired
 	AbstractAdministrativeLevelDao dao;
 	
+	public ArrayList<AbstractAdministrativeLevel> BuildBody(){
+		return dao.BuildBody();
+	}
+	
 	@Override
 	public ArrayList<String> getAddress(int address) {
 		return dao.getAddress(address);
