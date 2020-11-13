@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
@@ -22,26 +23,31 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	@Autowired 
 	DataSource dataSource;
 	
-	public ArrayList<AbstractAdministrativeLevel> BuildBody() {
+	public ArrayList<AbstractAdministrativeLevel> BuildBody() throws SQLException {
 		ArrayList<AbstractAdministrativeLevel> coordinationCollection =
-				getChildren(EnumAdministrativeLevel.ROOT, 0);
+				getChildren(null);
 
 		for(int c = 0; c < coordinationCollection.size(); c++) {
 			Coordination coordination = (Coordination)coordinationCollection.get(c);
 			ArrayList<AbstractAdministrativeLevel> zoneCollection =
-					getChildren(EnumAdministrativeLevel.COORDINATION, coordination.getId());
+					getChildren(coordination);
 			coordination.setChildrenCollection(zoneCollection);
 			
 			for(int z = 0; z < zoneCollection.size(); z++) {
 				AdministrativeLevel zone = (AdministrativeLevel)zoneCollection.get(z);
 				ArrayList<AbstractAdministrativeLevel> branchCollection =
-						getChildren(EnumAdministrativeLevel.ZONE, zone.getId());
+						getChildren(zone);
 				zone.setChildrenCollection(branchCollection);
 				
 				for(int b = 0; b < branchCollection.size(); b++) {
 					AdministrativeLevel branch = (AdministrativeLevel)branchCollection.get(b);
 					ArrayList<AbstractAdministrativeLevel> groupCollection =
-							getChildren(EnumAdministrativeLevel.BRANCH, branch.getId());
+							getChildren(branch);
+					for(int g = 0; g < groupCollection.size(); g++) {
+						Group group = (Group)groupCollection.get(g);
+						group.setMemberCollection(getMember(group));
+					}
+					
 					branch.setChildrenCollection(groupCollection);
 				}
 			}
@@ -77,11 +83,67 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	public Member MemberRowMapper(ResultSet rs) throws SQLException {
+		Member member = new Member();
+		member.setId(rs.getInt("Id"));
+		member.setCardId(rs.getString("cardId"));
+		member.setName(rs.getString("name"));
+		member.setLastname(rs.getString("lastname"));
+		member.setCountry(rs.getString("country"));
+		member.setState(rs.getString("state"));
+		member.setCity(rs.getString("city"));
+		member.setAddress(rs.getString("address"));
+		return member;
+	}
 
 	@Override
-	public ArrayList<Member> getMember(int current) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Member> getMember(AbstractAdministrativeLevel current) {
+		List<Member> result = null;
+		
+		EnumAdministrativeLevel type = current.getType();
+		int parent = current.getId();
+		switch(type) {
+		case COORDINATION:
+			sql = "SELECT * FROM sp_get_user_by_coordination_full(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] { parent },
+				new RowMapper<Member>() {
+			        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+			            return MemberRowMapper(rs);
+		        }
+		    });
+			break;
+		case ZONE:
+			sql = "SELECT * FROM sp_get_user_by_zone_full(?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {0, parent},
+				new RowMapper<Member>() {
+			        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	 return MemberRowMapper(rs);
+		        }
+		    });
+			break;
+		case BRANCH:
+			sql = "SELECT * FROM sp_get_user_by_branch_full(?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {0, parent},
+				new RowMapper<Member>() {
+			        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	 return MemberRowMapper(rs);
+		        }
+		    });
+			break;
+		case GROUP:
+			sql = "SELECT * FROM sp_get_user_by_group_full(?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] {0, parent},
+				new RowMapper<Member>() {
+			        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+			        	 return MemberRowMapper(rs);
+		        }
+		    });
+			break;
+		default:
+			break;
+		}
+		return new ArrayList<Member>(result);
 	}
 
 	@Override
@@ -91,8 +153,25 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	}
 
 	@Override
-	public int addMember(int current, int member) {
-		// TODO Auto-generated method stub
+	public int addMember(Member member) {
+		List<Integer> id = new ArrayList<Integer>();
+		if ( member.getId() == 0) {
+			sql = "SELECT * FROM sp_add_user(?, ?, ?)";
+			id = getJdbcTemplate().query(sql, new Object[] {member.getCardId(), member.getName(),
+					member.getLastname()}, new RowMapper<Integer>() {
+						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+							member.setId(rs.getInt("result"));
+							return 0;
+						}
+			});
+			member.setId(id.get(0));
+		}
+		sql = "SELECT * FROM sp_add_group_member(?, ?)";
+		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent()}, new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return 0;
+					}
+		});
 		return 0;
 	}
 
@@ -121,12 +200,14 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	}
 
 	@Override
-	public ArrayList<AbstractAdministrativeLevel> getChildren(EnumAdministrativeLevel type, int parent) {
-		List<AbstractAdministrativeLevel> result = new ArrayList<AbstractAdministrativeLevel>();
+	public ArrayList<AbstractAdministrativeLevel> getChildren(AbstractAdministrativeLevel current) {
+		List<AbstractAdministrativeLevel> result = null;
+		EnumAdministrativeLevel type = current == null ? EnumAdministrativeLevel.ROOT : current.getType();
+		int parent = current == null ? 0 : current.getId();
 		switch(type) {
 		case ROOT:
 			sql = "SELECT * FROM sp_get_coordination_full(?)";
-			result =  getJdbcTemplate().query(sql, new Object[] {parent},
+			result =  getJdbcTemplate().query(sql, new Object[] { parent },
 				new RowMapper<AbstractAdministrativeLevel>() {
 			        public AbstractAdministrativeLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
 			        	AdministrativeLevelBuilder builder = new AdministrativeLevelBuilder();
@@ -194,9 +275,56 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	}
 
 	@Override
-	public int addChildren(int current, int children) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addChildren(int parent, AbstractAdministrativeLevel child) throws SQLException {
+		List<Integer> result = new ArrayList<Integer>();
+		EnumAdministrativeLevel type = child.getType();
+		switch(type) {
+		case COORDINATION:
+			Coordination coordination = (Coordination)child;
+			sql = "SELECT * FROM sp_get_coordination_full(?)";
+			result =  getJdbcTemplate().query(sql, new Object[] { parent },
+					new RowMapper<Integer>() {
+						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+							return rs.getInt(0);
+						}
+					}
+			);
+			break;
+		case ZONE:
+			sql = "SELECT * FROM sp_add_zone(?, ?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] { parent, child.getName(), true },
+					new RowMapper<Integer>() {
+						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+							return rs.getInt(0);
+						}
+					}
+			);
+			break;
+		case BRANCH:
+			sql = "SELECT * FROM sp_add_branch(?, ?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] { parent, child.getName(), true },
+					new RowMapper<Integer>() {
+						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+							return rs.getInt(0);
+						}
+					}
+			);
+			break;
+		case GROUP:
+			Group group = (Group)child;
+			sql = "SELECT * FROM sp_add_group(?, ?, ?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] { parent, group.getName(), group.getNumber(), true },
+					new RowMapper<Integer>() {
+						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+							return rs.getInt(0);
+						}
+					}
+			);
+			break;
+		default:
+			break;
+		}
+		return result.get(0);
 	}
 
 	@Override
@@ -314,19 +442,19 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	}
 
 	@Override
-	public int setAdministrativeLevel(AdministrativeLevel current) {
+	public int setAdministrativeLevel(AbstractAdministrativeLevel current) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int addAdministrativeLevel(AdministrativeLevel current) {
+	public int addAdministrativeLevel(AbstractAdministrativeLevel current) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int delAdministrativeLevel(EnumAdministrativeLevel type, int id) {
+	public int delAdministrativeLevel(AbstractAdministrativeLevel type) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

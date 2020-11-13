@@ -3,9 +3,9 @@ package tec.diseno.communities.model;
 import java.util.ArrayList;
 
 public class AdministrativeLevelBuilder {
-	private AbstractAdministrativeLevel product;
 	
 	private int id;
+	private int parent;
 	private String legalId;
 	private int number;
 	private EnumAdministrativeLevel type;
@@ -49,14 +49,17 @@ public class AdministrativeLevelBuilder {
 		return product;
 	}
 	
-	public void setProduct(AbstractAdministrativeLevel product) {
-		this.product = product;
-	}
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public int getParent() {
+		return parent;
+	}
+	public void setParent(int parent) {
+		this.parent = parent;
 	}
 	public String getLegalId() {
 		return legalId;

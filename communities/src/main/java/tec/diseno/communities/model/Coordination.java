@@ -38,11 +38,11 @@ public class Coordination extends AdministrativeLevel {
 		website = _website;
 	}
 	
-	public String getLegalID() {
+	public String getLegalId() {
 		return legalId;
 	}
-	public void setLegalID(String legalID) {
-		this.legalId = legalID;
+	public void setLegalId(String legalId) {
+		this.legalId = legalId;
 	}
 	public String getWebsite() {
 		return website;

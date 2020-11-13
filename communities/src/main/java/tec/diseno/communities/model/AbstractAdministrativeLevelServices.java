@@ -1,5 +1,6 @@
 package tec.diseno.communities.model;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ public class AbstractAdministrativeLevelServices implements InterfaceAdministrat
 	@Autowired
 	AbstractAdministrativeLevelDao dao;
 	
-	public ArrayList<AbstractAdministrativeLevel> BuildBody(){
+	public ArrayList<AbstractAdministrativeLevel> BuildBody() throws SQLException{
 		return dao.BuildBody();
 	}
 	
@@ -36,18 +37,13 @@ public class AbstractAdministrativeLevelServices implements InterfaceAdministrat
 	}
 
 	@Override
-	public ArrayList<Member> getMember(int current) {
-		return dao.getMember(current);
-	}
-
-	@Override
 	public int setMember(int current, int member) {
 		return dao.setMember(current, member);
 	}
 
 	@Override
-	public int addMember(int current, int member) {
-		return dao.addMember(current, member);
+	public int addMember(Member member) throws SQLException {
+		return dao.addMember(member);
 	}
 
 	@Override
@@ -68,21 +64,6 @@ public class AbstractAdministrativeLevelServices implements InterfaceAdministrat
 	@Override
 	public int delLeader(int current, int member) {
 		return dao.delLeader(current, member);
-	}
-
-	@Override
-	public ArrayList<AbstractAdministrativeLevel> getChildren(EnumAdministrativeLevel type, int parent) {
-		return dao.getChildren(type, parent);
-	}
-
-	@Override
-	public int addChildren(int current, int children) {
-		return dao.addChildren(current, children);
-	}
-
-	@Override
-	public int delChildren(int current, int children) {
-		return dao.delChildren(current, children);
 	}
 
 	@Override
@@ -121,18 +102,41 @@ public class AbstractAdministrativeLevelServices implements InterfaceAdministrat
 	}
 
 	@Override
-	public int setAdministrativeLevel(AdministrativeLevel current) {
-		return dao.setAdministrativeLevel(current);
+	public ArrayList<Member> getMember(AbstractAdministrativeLevel current) {
+		return dao.getMember(current);
 	}
 
 	@Override
-	public int addAdministrativeLevel(AdministrativeLevel current) {
-		return dao.addAdministrativeLevel(current);
+	public ArrayList<AbstractAdministrativeLevel> getChildren(AbstractAdministrativeLevel current) {
+		return dao.getChildren(current);
 	}
 
 	@Override
-	public int delAdministrativeLevel(EnumAdministrativeLevel type, int id) {
-		return dao.delAdministrativeLevel(type, id);
+	public int addChildren(int current, AbstractAdministrativeLevel children) throws SQLException {
+		return dao.addChildren(current, children);
 	}
 
+	@Override
+	public int delChildren(int current, int children) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int setAdministrativeLevel(AbstractAdministrativeLevel current) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addAdministrativeLevel(AbstractAdministrativeLevel current) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int delAdministrativeLevel(AbstractAdministrativeLevel current) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

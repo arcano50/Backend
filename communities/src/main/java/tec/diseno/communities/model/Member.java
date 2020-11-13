@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 public class Member {
 	private int id;
-	private int cardId;
+	private int parent;
+	private String cardId;
 	private String name;
-	private String lastName;
+	private String lastname;
 	private String country;
 	private String state;
 	private String city;
 	private String address;
+	private boolean enable;
 	private ArrayList<String> telephoneCollection;
 	private ArrayList<String> emailCollection;
 
@@ -26,6 +28,14 @@ public class Member {
 		this.id = id;
 	}
 
+	public int getParent() {
+		return parent;
+	}
+
+	public void setParent(int parent) {
+		this.parent = parent;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -34,19 +44,19 @@ public class Member {
 		this.name = name;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getLastname() {
+		return lastname;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
-	public int getCardId() {
+	public String getCardId() {
 		return cardId;
 	}
 
-	public void setCardId(int cardId) {
+	public void setCardId(String cardId) {
 		this.cardId = cardId;
 	}
 
@@ -80,6 +90,14 @@ public class Member {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public boolean isEnable() {
+		return enable;
+	}
+
+	public void setEnable(boolean enable) {
+		this.enable = enable;
 	}
 
 	public ArrayList<String> getTelephoneCollection() {
