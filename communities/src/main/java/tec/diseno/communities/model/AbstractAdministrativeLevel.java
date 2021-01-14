@@ -10,6 +10,7 @@ public abstract class AbstractAdministrativeLevel {
 	private ArrayList<Member> leaderCollection;
 	private boolean loaded;
 	private boolean enable;
+	private ArrayList<News> news;
 	
 	public AbstractAdministrativeLevel() {
 		

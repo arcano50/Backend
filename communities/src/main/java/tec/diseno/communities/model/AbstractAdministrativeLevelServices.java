@@ -1,7 +1,9 @@
 package tec.diseno.communities.model;
 
+import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -138,5 +140,127 @@ public class AbstractAdministrativeLevelServices implements InterfaceAdministrat
 	public int delAdministrativeLevel(AbstractAdministrativeLevel current) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public int setBranchChildren(int current, AbstractAdministrativeLevel children) {
+		// TODO Auto-generated method stub
+		return dao.setBranchChildren(current, children);
+	}
+
+	@Override
+	public int setGroupChildren(int current, AbstractAdministrativeLevel children) {
+		// TODO Auto-generated method stub
+		return dao.setGroupChildren(current, children);
+	}
+
+	@Override
+	public int setCoordinationChildren(AbstractAdministrativeLevel children) {
+		// TODO Auto-generated method stub
+		return dao.setCoordinationChildren(children);
+	}
+
+	@Override
+	public int setZoneChildren(int current, AbstractAdministrativeLevel children) {
+		// TODO Auto-generated method stub
+		return dao.setZoneChildren(current, children);
+	}
+
+	@Override
+	public Member getUser(int id) {
+		// TODO Auto-generated method stub
+		return dao.getUser(id);
+	}
+
+	@Override
+	public int setBranchMember(int current, int user, int branch, boolean state) {
+		// TODO Auto-generated method stub
+		return dao.setBranchMember(current, user, branch, state);
+	}
+
+	@Override
+	public int setGroupMember(int current, int user, int branch, boolean state) {
+		// TODO Auto-generated method stub
+		return dao.setGroupMember(current, user, branch, state);
+	}
+
+	@Override
+	public int setZoneMember(int current, int user, int branch, boolean state) {
+		// TODO Auto-generated method stub
+		return dao.setZoneMember(current, user, branch, state);
+	}
+
+	@Override
+	public int setBranchLeader(int current, int user, int branch, boolean state) {
+		// TODO Auto-generated method stub
+		return dao.setBranchLeader(current, user, branch, state);
+	}
+
+	@Override
+	public int setGroupLeader(int current, int user, int branch, boolean temporal, boolean state) {
+		// TODO Auto-generated method stub
+		return dao.setGroupLeader(current, user, branch, temporal, state);
+	}
+
+	@Override
+	public int setZoneLeader(int current, int user, int branch, boolean state) {
+		// TODO Auto-generated method stub
+		return dao.setZoneLeader(current, user, branch, state);
+	}
+
+	@Override
+	public int addBranchMember(int current, int member) {
+		// TODO Auto-generated method stub
+		return dao.addBranchMember(current, member);
+	}
+
+	@Override
+	public int addGroupMember(int current, int member) {
+		// TODO Auto-generated method stub
+		return dao.addGroupMember(current, member);
+	}
+
+	@Override
+	public int addZoneMember(int current, int member) {
+		// TODO Auto-generated method stub
+		return dao.addZoneMember(current, member);
+	}
+
+	@Override
+	public int addBranchLeader(int current, int member) {
+		// TODO Auto-generated method stub
+		return dao.addBranchLeader(current, member);
+	}
+
+	@Override
+	public int addGroupLeader(int current, int member) {
+		// TODO Auto-generated method stub
+		return dao.addGroupLeader(current, member);
+	}
+
+	@Override
+	public int addZoneLeader(int current, int member) {
+		// TODO Auto-generated method stub
+		return dao.addZoneLeader(current, member);
+	}
+
+	@Override
+	public void addContribution(Contribution contribution) {
+		dao.addContribution(contribution);
+	}
+
+	@Override
+	public ByteArrayInputStream getContributions() {
+		return dao.getContributions();
+	}
+
+	@Override
+	public List<String> addNews(News news) {
+		return dao.addNews(news);
+	}
+
+	@Override
+	public List<News> getNewsByUser(int id) {
+		return dao.getNewsByUser(id);
 	}
 }

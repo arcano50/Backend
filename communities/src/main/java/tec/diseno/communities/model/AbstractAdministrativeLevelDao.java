@@ -1,8 +1,10 @@
 package tec.diseno.communities.model;
 
+import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,8 @@ import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
+
+import tec.diseno.communities.helper.CSVHelper;
 
 @Repository
 public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements InterfaceAdministrativeLevelBuilder {
@@ -160,7 +164,7 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 			id = getJdbcTemplate().query(sql, new Object[] {member.getCardId(), member.getName(),
 					member.getLastname()}, new RowMapper<Integer>() {
 						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-							member.setId(rs.getInt("result"));
+							// member.setId(rs.getInt("result"));
 							return 0;
 						}
 			});
@@ -273,6 +277,8 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		}
 		return new ArrayList<AbstractAdministrativeLevel>(result);
 	}
+	
+	
 
 	@Override
 	public int addChildren(int parent, AbstractAdministrativeLevel child) throws SQLException {
@@ -324,6 +330,64 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		default:
 			break;
 		}
+		return result.get(0);
+	}
+	
+	@Override
+	public int setBranchChildren(int current, AbstractAdministrativeLevel children) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_set_branch(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { children.getId(), current, children.getName(), children.isEnable() },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int setGroupChildren(int current, AbstractAdministrativeLevel children) {
+		List<Integer> result = new ArrayList<Integer>();
+		Group group = (Group)children;
+		sql = "SELECT * FROM sp_set_group(?, ?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { group.getId(), current, group.getName(), group.getNumber(), group.isEnable() },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int setZoneChildren(int current, AbstractAdministrativeLevel children) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_zone(?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { children.getId(), current, children.getName(), children.isEnable() },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+	
+	@Override
+	public int setCoordinationChildren(AbstractAdministrativeLevel children) {
+		List<Integer> result = new ArrayList<Integer>();
+		Coordination coordination = (Coordination)children;
+		sql = "SELECT * FROM sp_set_coordination(?, ?, ?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { coordination.getId(), coordination.getLegalId(), coordination.getName(), coordination.getWebsite(), 0, coordination.isEnable() },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
 		return result.get(0);
 	}
 
@@ -457,6 +521,234 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	public int delAdministrativeLevel(AbstractAdministrativeLevel type) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public Member getUser(int id) {
+		List<Member> result = null;
+		sql = "SELECT * FROM sp_get_user_full(?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { id },
+			new RowMapper<Member>() {
+		        public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+		        	Member member = new Member();
+		        	member.setId(rs.getInt("Id"));
+		        	member.setName(rs.getString("name"));
+		        	member.setLastname(rs.getString("lastname"));
+		        	member.setCountry(rs.getString("country"));
+		        	member.setState(rs.getString("state"));
+		        	member.setCity(rs.getString("city"));
+		        	member.setAddress(rs.getString("address"));
+		            return MemberRowMapper(rs);
+	        }
+	    });
+		return result.get(0);
+	}
+
+	@Override
+	public int setBranchMember(int current, int user, int branch, boolean state) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_set_branch_member(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { current, user, branch, state },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int setGroupMember(int current, int user, int branch, boolean state) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_set_group_member(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { current, user, branch, state },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int setZoneMember(int current, int user, int branch, boolean state) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_set_zone_member(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { current, user, branch, state },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int setBranchLeader(int current, int user, int branch, boolean state) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_set_branch_leader(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { current, user, branch, state },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int setGroupLeader(int current, int user, int branch, boolean temporal, boolean state) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_set_group_leader(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { current, user, branch, temporal, state },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int setZoneLeader(int current, int user, int branch, boolean state) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_set_zone_leader(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { current, user, branch, state },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt(0);
+					}
+				}
+		);
+		return result.get(0);
+	}
+
+	@Override
+	public int addBranchMember(int current, int member) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addGroupMember(int current, int member) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addZoneMember(int current, int member) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addBranchLeader(int current, int member) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addGroupLeader(int current, int member) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addZoneLeader(int current, int member) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void addContribution(Contribution contribution) {
+		List<Integer> result = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_contribution(?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { contribution.getMemeber().getId(), contribution.getType(), contribution.getSubject(), contribution.getContent() },
+				new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						System.out.println("Result set: " + rs.getInt("sp_add_contribution"));
+						return rs.getInt("sp_add_contribution");
+					}
+				}
+		);
+	}
+
+	@Override
+	public ByteArrayInputStream getContributions() {
+		// TODO Auto-generated method stub
+		List<Contribution> result = new ArrayList<Contribution>();
+		sql = "SELECT * FROM sp_get_contribution()";
+		result =  getJdbcTemplate().query(sql, new Object[] { },
+				new RowMapper<Contribution>() {
+					public Contribution mapRow(ResultSet rs, int rowNum) throws SQLException{
+						Contribution contribution = new Contribution();
+						Member member = new Member();
+						member.setId(rs.getInt("idUser"));
+						member.setName(rs.getString("user"));
+						contribution.setMember(member);
+						contribution.setType(rs.getString("type"));
+						contribution.setDate(rs.getDate("date"));
+						contribution.setSubject(rs.getString("subject"));
+						contribution.setContent(rs.getString("content"));
+						return contribution;
+					}
+				}
+		);
+		
+		ByteArrayInputStream in = CSVHelper.tutorialsToCSV(result);
+	    return in;
+	}
+
+	@Override
+	public List<String> addNews(News news) {
+		List<String> result = new ArrayList<String>();
+		sql = "SELECT * FROM sp_add_news(?, ?, ?, ?, ?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { news.getMember().getId(), news.getTo(), news.getDate(), news.getSubject(), news.getMessage() },
+				new RowMapper<String>() {
+					public String mapRow(ResultSet rs, int rowNum) throws SQLException{
+						String email = rs.getString("email");
+						return email;
+					}
+				}
+		);
+		
+		EventManager events = new EventManager("emails");
+		for (int i = 0; i < result.size(); i++) {
+			events.subscribe("emails", new EmailAlertListener(result.get(i)));
+		}
+		
+		events.notify("emails");
+		
+		return result;
+	}
+
+	@Override
+	public List<News> getNewsByUser(int id) {
+		List<News> result = new ArrayList<News>();
+		sql = "SELECT * FROM sp_get_news(?)";
+		result =  getJdbcTemplate().query(sql, new Object[] { id },
+				new RowMapper<News>() {
+					public News mapRow(ResultSet rs, int rowNum) throws SQLException{
+						News news = new News();
+						Member member = new Member();
+						member.setId(rs.getInt("IdUser"));
+						member.setName(rs.getString("name"));
+						news.setMember(member);
+						news.setDate(rs.getDate("date"));
+						news.setId(rs.getInt("Id"));
+						news.setMessage(rs.getString("content"));
+						news.setTo(rs.getString("to"));
+						news.setSubject(rs.getString("subject"));
+						return news;
+					}
+				}
+		);
+		return result;
 	}
 
 }
