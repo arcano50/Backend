@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,12 +21,16 @@ public class CSVHelper {
 
 	    try (ByteArrayOutputStream out = new ByteArrayOutputStream();
 	        CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format);) {
+	    	DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+	    	
 	      for (Contribution contribution : contributions) {
 	        List<String> data = Arrays.asList(
-	        		"Csv space #1",
-	        		"Csv space #2",
-	        		"Csv space #3",
-	        		"Csv space #4");
+	        		dateFormat.format(contribution.getDate()),
+	        		Integer.toString(contribution.getMemeber().getId()),
+	        		contribution.getContent(),
+	        		contribution.getMemeber().getName(),
+	        		contribution.getSubject(),
+	        		contribution.getType());
 
 	        csvPrinter.printRecord(data);
 	      }

@@ -56,11 +56,5 @@ public interface InterfaceAdministrativeLevelBuilder {
 	public int addAdministrativeLevel(AbstractAdministrativeLevel current);
 	public int delAdministrativeLevel(AbstractAdministrativeLevel current);
 	
-	public void addContribution(Contribution contribution);
-	public ByteArrayInputStream getContributions();
-	
-	public List<String> addNews(News news);
-	public List<News> getNewsByUser(int id);
-	
 	
 }

@@ -287,11 +287,11 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		switch(type) {
 		case COORDINATION:
 			Coordination coordination = (Coordination)child;
-			sql = "SELECT * FROM sp_get_coordination_full(?)";
-			result =  getJdbcTemplate().query(sql, new Object[] { parent },
+			sql = "SELECT * FROM sp_add_coordination(?, ?, ?, ?, ?)";
+			result =  getJdbcTemplate().query(sql, new Object[] { coordination.getLegalId(), coordination.getName(), coordination.getWebsite(), "", true },
 					new RowMapper<Integer>() {
 						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-							return rs.getInt(0);
+							return rs.getInt("sp_add_coordination");
 						}
 					}
 			);
@@ -301,7 +301,7 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 			result =  getJdbcTemplate().query(sql, new Object[] { parent, child.getName(), true },
 					new RowMapper<Integer>() {
 						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-							return rs.getInt(0);
+							return rs.getInt("sp_add_zone");
 						}
 					}
 			);
@@ -311,7 +311,7 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 			result =  getJdbcTemplate().query(sql, new Object[] { parent, child.getName(), true },
 					new RowMapper<Integer>() {
 						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-							return rs.getInt(0);
+							return rs.getInt("sp_add_branch");
 						}
 					}
 			);
@@ -322,7 +322,7 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 			result =  getJdbcTemplate().query(sql, new Object[] { parent, group.getName(), group.getNumber(), true },
 					new RowMapper<Integer>() {
 						public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-							return rs.getInt(0);
+							return rs.getInt("sp_add_group");
 						}
 					}
 			);
@@ -662,93 +662,6 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	public int addZoneLeader(int current, int member) {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	@Override
-	public void addContribution(Contribution contribution) {
-		List<Integer> result = new ArrayList<Integer>();
-		sql = "SELECT * FROM sp_add_contribution(?, ?, ?, ?)";
-		result =  getJdbcTemplate().query(sql, new Object[] { contribution.getMemeber().getId(), contribution.getType(), contribution.getSubject(), contribution.getContent() },
-				new RowMapper<Integer>() {
-					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-						System.out.println("Result set: " + rs.getInt("sp_add_contribution"));
-						return rs.getInt("sp_add_contribution");
-					}
-				}
-		);
-	}
-
-	@Override
-	public ByteArrayInputStream getContributions() {
-		// TODO Auto-generated method stub
-		List<Contribution> result = new ArrayList<Contribution>();
-		sql = "SELECT * FROM sp_get_contribution()";
-		result =  getJdbcTemplate().query(sql, new Object[] { },
-				new RowMapper<Contribution>() {
-					public Contribution mapRow(ResultSet rs, int rowNum) throws SQLException{
-						Contribution contribution = new Contribution();
-						Member member = new Member();
-						member.setId(rs.getInt("idUser"));
-						member.setName(rs.getString("user"));
-						contribution.setMember(member);
-						contribution.setType(rs.getString("type"));
-						contribution.setDate(rs.getDate("date"));
-						contribution.setSubject(rs.getString("subject"));
-						contribution.setContent(rs.getString("content"));
-						return contribution;
-					}
-				}
-		);
-		
-		ByteArrayInputStream in = CSVHelper.tutorialsToCSV(result);
-	    return in;
-	}
-
-	@Override
-	public List<String> addNews(News news) {
-		List<String> result = new ArrayList<String>();
-		sql = "SELECT * FROM sp_add_news(?, ?, ?, ?, ?)";
-		result =  getJdbcTemplate().query(sql, new Object[] { news.getMember().getId(), news.getTo(), news.getDate(), news.getSubject(), news.getMessage() },
-				new RowMapper<String>() {
-					public String mapRow(ResultSet rs, int rowNum) throws SQLException{
-						String email = rs.getString("email");
-						return email;
-					}
-				}
-		);
-		
-		EventManager events = new EventManager("emails");
-		for (int i = 0; i < result.size(); i++) {
-			events.subscribe("emails", new EmailAlertListener(result.get(i)));
-		}
-		
-		events.notify("emails");
-		
-		return result;
-	}
-
-	@Override
-	public List<News> getNewsByUser(int id) {
-		List<News> result = new ArrayList<News>();
-		sql = "SELECT * FROM sp_get_news(?)";
-		result =  getJdbcTemplate().query(sql, new Object[] { id },
-				new RowMapper<News>() {
-					public News mapRow(ResultSet rs, int rowNum) throws SQLException{
-						News news = new News();
-						Member member = new Member();
-						member.setId(rs.getInt("IdUser"));
-						member.setName(rs.getString("name"));
-						news.setMember(member);
-						news.setDate(rs.getDate("date"));
-						news.setId(rs.getInt("Id"));
-						news.setMessage(rs.getString("content"));
-						news.setTo(rs.getString("to"));
-						news.setSubject(rs.getString("subject"));
-						return news;
-					}
-				}
-		);
-		return result;
 	}
 
 }

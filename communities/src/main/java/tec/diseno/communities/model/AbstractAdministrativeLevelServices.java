@@ -9,258 +9,208 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AbstractAdministrativeLevelServices implements InterfaceAdministrativeLevelBuilder {
+public class AbstractAdministrativeLevelServices {
 
 	@Autowired
-	AbstractAdministrativeLevelDao dao;
+	AbstractAdministrativeLevelDao administrativeLevelDao;
+	@Autowired
+	ContributionDao contributionDao;
+	@Autowired
+	NewsDao newsDao;
 	
 	public ArrayList<AbstractAdministrativeLevel> BuildBody() throws SQLException{
-		return dao.BuildBody();
+		return administrativeLevelDao.BuildBody();
 	}
 	
-	@Override
 	public ArrayList<String> getAddress(int address) {
-		return dao.getAddress(address);
+		return administrativeLevelDao.getAddress(address);
 	}
 
-	@Override
 	public int setAddress(int city, String address) {
-		return dao.setAddress(city, address);
+		return administrativeLevelDao.setAddress(city, address);
 	}
 
-	@Override
 	public int addAddress(int city, String address) {
-		return dao.addAddress(city, address);
+		return administrativeLevelDao.addAddress(city, address);
 	}
 
-	@Override
 	public int delAddress(int address) {
-		return dao.delAddress(address);
+		return administrativeLevelDao.delAddress(address);
 	}
 
-	@Override
 	public int setMember(int current, int member) {
-		return dao.setMember(current, member);
+		return administrativeLevelDao.setMember(current, member);
 	}
 
-	@Override
 	public int addMember(Member member) throws SQLException {
-		return dao.addMember(member);
+		return administrativeLevelDao.addMember(member);
 	}
 
-	@Override
 	public int delMember(int current, int member) {
-		return dao.delMember(current, member);
+		return administrativeLevelDao.delMember(current, member);
 	}
 
-	@Override
 	public ArrayList<Member> getLeader(int current) {
-		return dao.getLeader(current);
+		return administrativeLevelDao.getLeader(current);
 	}
 
-	@Override
 	public int addLeader(int current, int member) {
-		return dao.addLeader(current, member);
+		return administrativeLevelDao.addLeader(current, member);
 	}
 
-	@Override
 	public int delLeader(int current, int member) {
-		return dao.delLeader(current, member);
+		return administrativeLevelDao.delLeader(current, member);
 	}
 
-	@Override
 	public ArrayList<String> getTelephone(int telephone) {
-		return dao.getTelephone(telephone);
+		return administrativeLevelDao.getTelephone(telephone);
 	}
 
-	@Override
 	public int addTelephone(int telephone) {
-		return dao.addTelephone(telephone);
+		return administrativeLevelDao.addTelephone(telephone);
 	}
 
-	@Override
 	public int delTelephone(int telephone) {
-		return dao.delTelephone(telephone);
+		return administrativeLevelDao.delTelephone(telephone);
 	}
 
-	@Override
 	public ArrayList<String> getEmail(int email) {
-		return dao.getEmail(email);
+		return administrativeLevelDao.getEmail(email);
 	}
 
-	@Override
 	public int addEmail(int email) {
-		return dao.addEmail(email);
+		return administrativeLevelDao.addEmail(email);
 	}
 
-	@Override
 	public int delEmail(int email) {
-		return dao.delEmail(email);
+		return administrativeLevelDao.delEmail(email);
 	}
 
-	@Override
 	public AbstractAdministrativeLevel getAdministrativeLevel(EnumAdministrativeLevel type, int id) {
-		return dao.getAdministrativeLevel(type, id);
+		return administrativeLevelDao.getAdministrativeLevel(type, id);
 	}
 
-	@Override
 	public ArrayList<Member> getMember(AbstractAdministrativeLevel current) {
-		return dao.getMember(current);
+		return administrativeLevelDao.getMember(current);
 	}
 
-	@Override
 	public ArrayList<AbstractAdministrativeLevel> getChildren(AbstractAdministrativeLevel current) {
-		return dao.getChildren(current);
+		return administrativeLevelDao.getChildren(current);
 	}
 
-	@Override
 	public int addChildren(int current, AbstractAdministrativeLevel children) throws SQLException {
-		return dao.addChildren(current, children);
+		return administrativeLevelDao.addChildren(current, children);
 	}
 
-	@Override
 	public int delChildren(int current, int children) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public int setAdministrativeLevel(AbstractAdministrativeLevel current) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public int addAdministrativeLevel(AbstractAdministrativeLevel current) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public int delAdministrativeLevel(AbstractAdministrativeLevel current) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public int setBranchChildren(int current, AbstractAdministrativeLevel children) {
 		// TODO Auto-generated method stub
-		return dao.setBranchChildren(current, children);
+		return administrativeLevelDao.setBranchChildren(current, children);
 	}
 
-	@Override
 	public int setGroupChildren(int current, AbstractAdministrativeLevel children) {
 		// TODO Auto-generated method stub
-		return dao.setGroupChildren(current, children);
+		return administrativeLevelDao.setGroupChildren(current, children);
 	}
 
-	@Override
 	public int setCoordinationChildren(AbstractAdministrativeLevel children) {
 		// TODO Auto-generated method stub
-		return dao.setCoordinationChildren(children);
+		return administrativeLevelDao.setCoordinationChildren(children);
 	}
 
-	@Override
 	public int setZoneChildren(int current, AbstractAdministrativeLevel children) {
 		// TODO Auto-generated method stub
-		return dao.setZoneChildren(current, children);
+		return administrativeLevelDao.setZoneChildren(current, children);
 	}
 
-	@Override
 	public Member getUser(int id) {
 		// TODO Auto-generated method stub
-		return dao.getUser(id);
+		return administrativeLevelDao.getUser(id);
 	}
 
-	@Override
 	public int setBranchMember(int current, int user, int branch, boolean state) {
 		// TODO Auto-generated method stub
-		return dao.setBranchMember(current, user, branch, state);
+		return administrativeLevelDao.setBranchMember(current, user, branch, state);
 	}
 
-	@Override
 	public int setGroupMember(int current, int user, int branch, boolean state) {
 		// TODO Auto-generated method stub
-		return dao.setGroupMember(current, user, branch, state);
+		return administrativeLevelDao.setGroupMember(current, user, branch, state);
 	}
 
-	@Override
 	public int setZoneMember(int current, int user, int branch, boolean state) {
 		// TODO Auto-generated method stub
-		return dao.setZoneMember(current, user, branch, state);
+		return administrativeLevelDao.setZoneMember(current, user, branch, state);
 	}
 
-	@Override
 	public int setBranchLeader(int current, int user, int branch, boolean state) {
-		// TODO Auto-generated method stub
-		return dao.setBranchLeader(current, user, branch, state);
+		return administrativeLevelDao.setBranchLeader(current, user, branch, state);
 	}
 
-	@Override
 	public int setGroupLeader(int current, int user, int branch, boolean temporal, boolean state) {
-		// TODO Auto-generated method stub
-		return dao.setGroupLeader(current, user, branch, temporal, state);
+		return administrativeLevelDao.setGroupLeader(current, user, branch, temporal, state);
 	}
 
-	@Override
 	public int setZoneLeader(int current, int user, int branch, boolean state) {
-		// TODO Auto-generated method stub
-		return dao.setZoneLeader(current, user, branch, state);
+		return administrativeLevelDao.setZoneLeader(current, user, branch, state);
 	}
 
-	@Override
 	public int addBranchMember(int current, int member) {
-		// TODO Auto-generated method stub
-		return dao.addBranchMember(current, member);
+		return administrativeLevelDao.addBranchMember(current, member);
 	}
 
-	@Override
 	public int addGroupMember(int current, int member) {
-		// TODO Auto-generated method stub
-		return dao.addGroupMember(current, member);
+		return administrativeLevelDao.addGroupMember(current, member);
 	}
 
-	@Override
 	public int addZoneMember(int current, int member) {
-		// TODO Auto-generated method stub
-		return dao.addZoneMember(current, member);
+		return administrativeLevelDao.addZoneMember(current, member);
 	}
 
-	@Override
 	public int addBranchLeader(int current, int member) {
-		// TODO Auto-generated method stub
-		return dao.addBranchLeader(current, member);
+		return administrativeLevelDao.addBranchLeader(current, member);
 	}
 
-	@Override
 	public int addGroupLeader(int current, int member) {
-		// TODO Auto-generated method stub
-		return dao.addGroupLeader(current, member);
+		return administrativeLevelDao.addGroupLeader(current, member);
 	}
 
-	@Override
 	public int addZoneLeader(int current, int member) {
-		// TODO Auto-generated method stub
-		return dao.addZoneLeader(current, member);
+		return administrativeLevelDao.addZoneLeader(current, member);
 	}
 
-	@Override
 	public void addContribution(Contribution contribution) {
-		dao.addContribution(contribution);
+		contributionDao.addContribution(contribution);
 	}
 
-	@Override
-	public ByteArrayInputStream getContributions() {
-		return dao.getContributions();
+	public ByteArrayInputStream getContributions(String type) {
+		return contributionDao.getContributions(type);
 	}
 
-	@Override
 	public List<String> addNews(News news) {
-		return dao.addNews(news);
+		return newsDao.addNews(news);
 	}
 
-	@Override
 	public List<News> getNewsByUser(int id) {
-		return dao.getNewsByUser(id);
+		return newsDao.getNewsByUser(id);
 	}
 }

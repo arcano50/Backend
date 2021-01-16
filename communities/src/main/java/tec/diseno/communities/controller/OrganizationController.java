@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -66,35 +67,37 @@ public class OrganizationController {
 	public Object addChildren(@RequestBody AdministrativeLevelBuilder children) {
 		EnumAdministrativeLevel type = children.getType();
 		try {
-			services.addChildren(children.getParent(), children.getProduct());
+			return services.addChildren(children.getParent(), children.getProduct());
 		}
 		catch (SQLException e) {
 			return e;
 		}
-		switch(type) {
-		case COORDINATION:
-			break;
-		case ZONE:
-			break;
-		case BRANCH:
-			break;
-		case GROUP:
-			break;
-		default:
-			break;
-		}
-		return 0;
 	}
 	
 	@RequestMapping(value="/addMember", produces = "application/json", method = RequestMethod.POST)
-	public Member addMember(@RequestBody Member member) {
+	public int addMember(@RequestBody Member member) {
+		int value = -1;
 		try {
-			services.addMember(member);
+			value = services.addMember(member);
 		}
 		catch (SQLException e) {
 			System.out.print(e);
 		}
-		return member;
+		return value;
+	}
+	
+	@RequestMapping(value="/getMembers", produces = "application/json", method = RequestMethod.POST)
+	public ArrayList<Member> getMembers(@RequestBody AbstractAdministrativeLevel current) throws SQLException {
+		ArrayList<Member> members = new ArrayList<Member>();
+		members = services.getMember(current);
+		return members;
+	}
+	
+	@RequestMapping(value="/getChildren", produces = "application/json", method = RequestMethod.POST)
+	public ArrayList<AbstractAdministrativeLevel> getChildren(@RequestBody AbstractAdministrativeLevel children) throws SQLException {
+		ArrayList<AbstractAdministrativeLevel> administrativeLevels = new ArrayList<AbstractAdministrativeLevel>();
+		administrativeLevels = services.getChildren(children);
+		return administrativeLevels;
 	}
 	
 	@RequestMapping(value = "/addContribution", method = RequestMethod.POST)
@@ -111,15 +114,22 @@ public class OrganizationController {
 	
 	@GetMapping("/getNews")
 	@ResponseBody
-	public List<News> geNews(@RequestParam(name="id", required=true) int id) {
+	public List<News> getNews(@RequestParam(name="id", required=true) int id) {
 	    return services.getNewsByUser(id);
 	}
 	
 	@GetMapping("/download")
-	public ResponseEntity<InputStreamResource> getContribution(){
-		String filename = "tutorials.csv";
-	    InputStreamResource file = new InputStreamResource(services.getContributions());
-
+	@ResponseBody
+	public ResponseEntity<InputStreamResource> getContribution(@RequestHeader(value="Authorization") String AuthorizationHeader, @RequestParam(name="type", required=true) String type) {
+		System.out.println("AuthorizationHeader: " + AuthorizationHeader);
+		String filename;
+		if(type == "JSON") {
+			filename = "tutorials.json";
+		} else {
+			filename = "tutorials.csv";
+		}
+	    InputStreamResource file = new InputStreamResource(services.getContributions(type));
+	    
 		return ResponseEntity.ok()
 		        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
 		        .contentType(MediaType.parseMediaType("application/csv"))
