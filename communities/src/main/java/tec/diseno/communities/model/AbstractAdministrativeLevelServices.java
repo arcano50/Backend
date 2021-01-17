@@ -174,28 +174,28 @@ public class AbstractAdministrativeLevelServices {
 		return administrativeLevelDao.setZoneLeader(current, user, branch, state);
 	}
 
-	public int addBranchMember(int current, int member) {
-		return administrativeLevelDao.addBranchMember(current, member);
+	public int addBranchMember(Member member) {
+		return administrativeLevelDao.addBranchMember(member);
 	}
 
-	public int addGroupMember(int current, int member) {
-		return administrativeLevelDao.addGroupMember(current, member);
+	public int addGroupMember(Member member) {
+		return administrativeLevelDao.addGroupMember(member);
 	}
 
-	public int addZoneMember(int current, int member) {
-		return administrativeLevelDao.addZoneMember(current, member);
+	public int addZoneMember(Member member) {
+		return administrativeLevelDao.addZoneMember(member);
 	}
 
-	public int addBranchLeader(int current, int member) {
-		return administrativeLevelDao.addBranchLeader(current, member);
+	public int addBranchLeader(Member member) {
+		return administrativeLevelDao.addBranchLeader(member);
 	}
 
-	public int addGroupLeader(int current, int member) {
-		return administrativeLevelDao.addGroupLeader(current, member);
+	public int addGroupLeader(Member member) {
+		return administrativeLevelDao.addGroupLeader(member);
 	}
 
-	public int addZoneLeader(int current, int member) {
-		return administrativeLevelDao.addZoneLeader(current, member);
+	public int addZoneLeader(Member member) {
+		return administrativeLevelDao.addZoneLeader(member);
 	}
 
 	public void addContribution(Contribution contribution) {

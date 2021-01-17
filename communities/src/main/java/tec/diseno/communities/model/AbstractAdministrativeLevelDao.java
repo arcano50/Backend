@@ -170,12 +170,6 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 			});
 			member.setId(id.get(0));
 		}
-		sql = "SELECT * FROM sp_add_group_member(?, ?)";
-		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent()}, new RowMapper<Integer>() {
-					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-						return 0;
-					}
-		});
 		return 0;
 	}
 
@@ -551,7 +545,7 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		result =  getJdbcTemplate().query(sql, new Object[] { current, user, branch, state },
 				new RowMapper<Integer>() {
 					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
-						return rs.getInt(0);
+						return rs.getInt("sp_set_branch_member");
 					}
 				}
 		);
@@ -629,39 +623,75 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 	}
 
 	@Override
-	public int addBranchMember(int current, int member) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addBranchMember(Member member) {
+		List<Integer> id = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_branch_member(?, ?, ?)";
+		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent(), true}, new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt("sp_add_branch_member");
+					}
+		});
+		return id.get(0);
 	}
 
 	@Override
-	public int addGroupMember(int current, int member) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addGroupMember(Member member) {
+		List<Integer> id = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_group_member(?, ?)";
+		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent()}, new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt("sp_add_group_member");
+					}
+		});
+		return id.get(0);
 	}
 
 	@Override
-	public int addZoneMember(int current, int member) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addZoneMember(Member member) {
+		List<Integer> id = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_zone_member(?, ?, ?)";
+		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent(), true}, new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt("sp_add_zone_member");
+					}
+		});
+		return id.get(0);
 	}
 
 	@Override
-	public int addBranchLeader(int current, int member) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addBranchLeader(Member member) {
+		List<Integer> id = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_branch_leader(?, ?, ?)";
+		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent(), true}, new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt("sp_add_zone_member");
+					}
+		});
+		return id.get(0);
 	}
 
 	@Override
-	public int addGroupLeader(int current, int member) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addGroupLeader(Member member) {
+		List<Integer> id = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_branch_leader(?, ?, ?, ?)";
+		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent(), member.isEnable(), true}, new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt("sp_add_zone_member");
+					}
+		});
+		return id.get(0);
 	}
 
 	@Override
-	public int addZoneLeader(int current, int member) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addZoneLeader(Member member) {
+		List<Integer> id = new ArrayList<Integer>();
+		sql = "SELECT * FROM sp_add_zone_leader(?, ?, ?)";
+		id = getJdbcTemplate().query(sql, new Object[] {member.getId(), member.getParent(), true}, new RowMapper<Integer>() {
+					public Integer mapRow(ResultSet rs, int rowNum) throws SQLException{
+						return rs.getInt("sp_add_zone_leader");
+					}
+		});
+		return id.get(0);
 	}
 
 }

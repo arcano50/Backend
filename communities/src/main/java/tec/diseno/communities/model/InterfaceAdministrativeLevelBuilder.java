@@ -15,12 +15,12 @@ public interface InterfaceAdministrativeLevelBuilder {
 	public Member getUser(int id);
 	
 	public ArrayList<Member> getMember(AbstractAdministrativeLevel current);
-	public int addBranchMember(int current, int member);
-	public int addGroupMember(int current, int member);
-	public int addZoneMember(int current, int member);
-	public int addBranchLeader(int current, int member);
-	public int addGroupLeader(int current, int member);
-	public int addZoneLeader(int current, int member);
+	public int addBranchMember(Member member);
+	public int addGroupMember(Member member);
+	public int addZoneMember(Member member);
+	public int addBranchLeader(Member member);
+	public int addGroupLeader(Member member);
+	public int addZoneLeader(Member member);
 	public int setMember(int current, int member);
 	public int setBranchLeader(int current, int user, int branch, boolean state);
 	public int setGroupLeader(int current, int user, int branch, boolean temporal, boolean state);

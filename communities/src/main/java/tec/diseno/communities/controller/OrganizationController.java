@@ -1,5 +1,6 @@
 package tec.diseno.communities.controller;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -98,6 +100,123 @@ public class OrganizationController {
 		ArrayList<AbstractAdministrativeLevel> administrativeLevels = new ArrayList<AbstractAdministrativeLevel>();
 		administrativeLevels = services.getChildren(children);
 		return administrativeLevels;
+	}
+	
+	@RequestMapping(value="/getAdministrativeLevel", produces = "application/json", method = RequestMethod.POST)
+	public AbstractAdministrativeLevel getAdministrativeLevel(@RequestBody AbstractAdministrativeLevel children) throws SQLException {
+		AbstractAdministrativeLevel administrativeLevel;
+		administrativeLevel = services.getAdministrativeLevel(children.getType(), children.getId());
+		return administrativeLevel;
+	}
+	
+	@RequestMapping(value="/setChildren", produces = "application/json", method = RequestMethod.POST)
+	public int setChildren(@RequestBody AdministrativeLevelBuilder children) {
+		int value = -1;
+		EnumAdministrativeLevel type = children.getType();
+		switch(type) {
+		case COORDINATION:
+			value = services.setCoordinationChildren(children.getProduct());
+			break;
+		case ZONE:
+			value = services.setZoneChildren(children.getParent(), children.getProduct());
+			break;
+		case BRANCH:
+			value = services.setBranchChildren(children.getParent(), children.getProduct());
+			break;
+		case GROUP:
+			value = services.setGroupChildren(children.getParent(), children.getProduct());
+			break;
+		default:
+			break;
+		}
+		return value;
+	}
+	
+	@RequestMapping(value="/setMember", produces = "application/json", method = RequestMethod.POST)
+	public int setMember(@RequestBody AdministrativeLevelBuilder children) {
+		int value = -1;
+		EnumAdministrativeLevel type = children.getType();
+		switch(type) {
+		case ZONE:
+			value = services.setZoneMember(children.getParent(), children.getMemberCollection().get(0).getId(), children.getProduct().getId(), children.isEnable());
+			break;
+		case BRANCH:
+			value = services.setBranchMember(children.getParent(), children.getMemberCollection().get(0).getId(), children.getProduct().getId(), children.isEnable());
+			break;
+		case GROUP:
+			value = services.setGroupMember(children.getParent(), children.getMemberCollection().get(0).getId(), children.getProduct().getId(), children.isEnable());
+			break;
+		default:
+			break;
+		}
+		return value;
+	}
+	
+	@RequestMapping(value="/setLeader", produces = "application/json", method = RequestMethod.POST)
+	public int setLeader(@RequestBody AdministrativeLevelBuilder children) {
+		int value = -1;
+		EnumAdministrativeLevel type = children.getType();
+		switch(type) {
+		case ZONE:
+			value = services.setZoneLeader(children.getParent(), children.getLeaderCollection().get(0).getId(), children.getProduct().getId(), children.isEnable());
+			break;
+		case BRANCH:
+			value = services.setBranchLeader(children.getParent(), children.getLeaderCollection().get(0).getId(), children.getProduct().getId(), children.isEnable());
+			break;
+		case GROUP:
+			value = services.setGroupLeader(children.getParent(), children.getLeaderCollection().get(0).getId(), children.getProduct().getId(), children.getMemberCollection().get(0).isEnable(), children.isEnable());
+			break;
+		default:
+			break;
+		}
+		return value;
+	}
+	
+	@RequestMapping(value="/addLeader", produces = "application/json", method = RequestMethod.POST)
+	public int addLeader(@RequestBody AdministrativeLevelBuilder children) {
+		int value = -1;
+		EnumAdministrativeLevel type = children.getType();
+		switch(type) {
+		case ZONE:
+			value = services.addZoneLeader(children.getLeaderCollection().get(0));
+			break;
+		case BRANCH:
+			value = services.addBranchLeader(children.getLeaderCollection().get(0));
+			break;
+		case GROUP:
+			value = services.addGroupLeader(children.getLeaderCollection().get(0));
+			break;
+		default:
+			break;
+		}
+		return value;
+	}
+	
+	@RequestMapping(value="/addMember", produces = "application/json", method = RequestMethod.POST)
+	public int addMember(@RequestBody AdministrativeLevelBuilder children) {
+		int value = -1;
+		EnumAdministrativeLevel type = children.getType();
+		switch(type) {
+		case ZONE:
+			value = services.addZoneMember(children.getLeaderCollection().get(0));
+			break;
+		case BRANCH:
+			value = services.addBranchMember(children.getLeaderCollection().get(0));
+			break;
+		case GROUP:
+			value = services.addGroupMember(children.getLeaderCollection().get(0));
+			break;
+		default:
+			break;
+		}
+		return value;
+	}
+	
+	@RequestMapping(value="/getUser", produces = "application/json", method = RequestMethod.POST)
+	public Member getUser(@RequestBody Member member) throws SQLException {
+		Member outMember = new Member();
+		outMember = services.getUser(member.getId());
+		return outMember;
 	}
 	
 	@RequestMapping(value = "/addContribution", method = RequestMethod.POST)
