@@ -57,4 +57,7 @@ public interface InterfaceAdministrativeLevelBuilder {
 	public int delAdministrativeLevel(AbstractAdministrativeLevel current);
 	
 	
+	public Account checkAccount(String username);
+        public String login(String username, String password);
+	
 }

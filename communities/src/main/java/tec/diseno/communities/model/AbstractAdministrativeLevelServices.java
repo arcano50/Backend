@@ -205,6 +205,10 @@ public class AbstractAdministrativeLevelServices {
 	public ByteArrayInputStream getContributions(String type) {
 		return contributionDao.getContributions(type);
 	}
+        
+        public List<ContributionReport> getContributionReport(){
+            return contributionDao.getContributionReport();
+        }
 
 	public List<String> addNews(News news) {
 		return newsDao.addNews(news);
@@ -213,4 +217,14 @@ public class AbstractAdministrativeLevelServices {
 	public List<News> getNewsByUser(int id) {
 		return newsDao.getNewsByUser(id);
 	}
+        
+        
+        public Account checkAccount(String username){
+            return administrativeLevelDao.checkAccount(username);
+        }
+        
+        
+        public String login(String username, String password){
+            return administrativeLevelDao.login(username, password);
+        }
 }
