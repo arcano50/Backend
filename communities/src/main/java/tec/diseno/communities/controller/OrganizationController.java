@@ -28,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tec.diseno.communities.model.AbstractAdministrativeLevel;
 import tec.diseno.communities.model.AbstractAdministrativeLevelServices;
+import tec.diseno.communities.model.Account;
 import tec.diseno.communities.model.AdministrativeLevel;
 import tec.diseno.communities.model.AdministrativeLevelBuilder;
 import tec.diseno.communities.model.Contribution;
+import tec.diseno.communities.model.ContributionReport;
 import tec.diseno.communities.model.Coordination;
 import tec.diseno.communities.model.EnumAdministrativeLevel;
 import tec.diseno.communities.model.Group;
@@ -253,5 +255,21 @@ public class OrganizationController {
 		        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
 		        .contentType(MediaType.parseMediaType("application/csv"))
 		        .body(file);
+	}
+	
+	@RequestMapping(value="/checkAccount", produces = "application/json", method = RequestMethod.POST)
+        public Account CheckAccount(@RequestParam(name="username") String username){
+            return services.checkAccount(username);
+        }
+        
+	@RequestMapping(value="/login", produces = "application/json", method = RequestMethod.POST)
+	public String login(@RequestParam(name="username") String username,
+			@RequestParam(name="password") String password){
+		return services.login(username, password);
+	}
+	
+	@RequestMapping(value = "/getReport", method = RequestMethod.POST)
+	public List<ContributionReport> getReport() {
+	    return services.getContributionReport();
 	}
 }

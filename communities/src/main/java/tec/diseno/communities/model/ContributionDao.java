@@ -66,4 +66,21 @@ public class ContributionDao extends JdbcDaoSupport implements ContributionBuild
 		
 	    return in;
 	}
+	
+        public List<ContributionReport> getContributionReport(){
+            List<ContributionReport> result = new ArrayList<>();
+            sql = "SELECT * FROM sp_get_contribution_report()";
+            result =  getJdbcTemplate().query(sql, new Object[] { },
+				new RowMapper<ContributionReport>() {
+					public ContributionReport mapRow(ResultSet rs, int rowNum) throws SQLException{
+						ContributionReport contribution = new ContributionReport();
+                                                contribution.setId(rs.getInt("type"));
+                                                contribution.setName(rs.getString("name"));
+                                                contribution.setValue(rs.getInt("amount"));
+						return contribution;
+					}
+				}
+		);
+            return result;
+        }
 }

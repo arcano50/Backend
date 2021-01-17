@@ -693,5 +693,34 @@ public class AbstractAdministrativeLevelDao extends JdbcDaoSupport  implements I
 		});
 		return id.get(0);
 	}
+	
+	public Account checkAccount(String username){
+        sql = "SELECT * FROM sp_check_account(?)";
+        List<Account> result =  getJdbcTemplate().query(sql, new Object[] { username },
+            new RowMapper<Account>() {
+                public Account mapRow(ResultSet rs, int rowNum) throws SQLException{
+                    Account account = new Account();
+                    account.setIdUser(rs.getInt("IdUser"));
+                    account.setName(rs.getString("name"));
+                    account.setRole(EnumRole.valueOf(rs.getString("role")));
+                    account.setIdAccount(rs.getInt("IdAccount"));
+                    account.setUsername(rs.getString("username"));
+                    account.setEnable(rs.getBoolean("enable"));
+                    return account;
+                }
+            }
+        );
+        if (result.isEmpty()) return new Account();
+        return result.get(0);
+    }
+
+    public String login(String username, String password){
+        sql = "SELECT * FROM sp_login(?, ?)";
+        List<String> result =  getJdbcTemplate().query(sql,
+                new Object[] { username, password },
+                (ResultSet rs, int rowNum) -> rs.getString("token"));
+        if (result.isEmpty()) return "0";
+        return result.get(0);
+    }
 
 }
