@@ -5,18 +5,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class NewsDao extends JdbcDaoSupport implements NewsBuilder{
 	
 	private String sql;
 	
 	@Autowired 
 	DataSource dataSource;
+	
+	@PostConstruct
+	private void initialize() {
+		setDataSource(dataSource);
+	}
 	
 	@Override
 	public List<String> addNews(News news) {

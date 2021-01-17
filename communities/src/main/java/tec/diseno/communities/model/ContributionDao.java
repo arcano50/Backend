@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,11 @@ public class ContributionDao extends JdbcDaoSupport implements ContributionBuild
 	
 	@Autowired 
 	DataSource dataSource;
+	
+	@PostConstruct
+	private void initialize(){
+		setDataSource(dataSource);
+	}
 	
 	@Override
 	public void addContribution(Contribution contribution) {

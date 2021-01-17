@@ -15,7 +15,7 @@ public class ProxyUserManager implements UserManager{
 	public ByteArrayInputStream getContribution(String type) {
 		switch(this.userType) {
 		case "MEMBER":
-			break;
+			return null;
 		case "BOSS":
 			return null;
 		case "ADMIN":
@@ -23,8 +23,6 @@ public class ProxyUserManager implements UserManager{
 		default:
 			return null;
 		}
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	

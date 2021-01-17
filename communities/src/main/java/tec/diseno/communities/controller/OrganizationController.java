@@ -76,7 +76,7 @@ public class OrganizationController {
 		}
 	}
 	
-	@RequestMapping(value="/addMember", produces = "application/json", method = RequestMethod.POST)
+	@RequestMapping(value="/addUser", produces = "application/json", method = RequestMethod.POST)
 	public int addMember(@RequestBody Member member) {
 		int value = -1;
 		try {
