@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
+import tec.diseno.communities.helper.EmailHelper;
 import tec.diseno.communities.model.AbstractAdministrativeLevelServices;
 
 @SpringBootApplication

@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,9 @@ public class NewsDao extends JdbcDaoSupport implements NewsBuilder{
 	
 	@Autowired 
 	DataSource dataSource;
+	
+	@Autowired 
+	EmailAlertListener emailListener;
 	
 	@PostConstruct
 	private void initialize() {
@@ -33,6 +37,7 @@ public class NewsDao extends JdbcDaoSupport implements NewsBuilder{
 		result =  getJdbcTemplate().query(sql, new Object[] { news.getMember().getId(), news.getTo(), news.getDate(), news.getSubject(), news.getMessage() },
 				new RowMapper<String>() {
 					public String mapRow(ResultSet rs, int rowNum) throws SQLException{
+						System.out.println("email: " + rs.getString("email"));
 						String email = rs.getString("email");
 						return email;
 					}
@@ -41,7 +46,9 @@ public class NewsDao extends JdbcDaoSupport implements NewsBuilder{
 		
 		EventManager events = new EventManager("emails");
 		for (int i = 0; i < result.size(); i++) {
-			events.subscribe("emails", new EmailAlertListener(result.get(i)));
+			System.out.println("Email: " + result.get(i));
+			emailListener.setEmailName(result.get(i));
+			events.subscribe("emails", emailListener);
 		}
 		
 		events.notify("emails");
